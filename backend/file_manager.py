@@ -93,7 +93,7 @@ class AudioFileManager:
         
         except Exception as e:
             print(f"Error extracting metadata: {e}")
-            return{
+            return {
                 'title': os.path.splitext(os.path.basename(file_path))[0],
                 'artist': 'Unknown',
                 'album': 'Unknown',
