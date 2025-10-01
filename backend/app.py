@@ -21,18 +21,15 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
 
 db.init_app(app)
 
-# create upload directory
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 app.register_blueprint(songs_bp, url_prefix='/api')
 app.register_blueprint(playlists_bp, url_prefix='/api')
-app.register_blueprint(playlists_songs_bp, url_prefix='/api')  # Add this line
+app.register_blueprint(playlists_songs_bp, url_prefix='/api') 
 
-
-# Simple health check endpoint
 @app.route('/api/health')
 def health_check():
-    return jsonify({'status': 'healthy', 'timestamp': datetime.utcnow(timezone.utc)})
+    return jsonify({'status': 'healthy', 'timestamp': datetime.now(timezone.utc)})
 
 if __name__ == '__main__':
     with app.app_context():

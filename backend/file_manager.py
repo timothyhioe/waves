@@ -3,12 +3,14 @@ from mutagen import File
 from werkzeug.utils import secure_filename
 import hashlib
 from typing import Dict, Optional
+from metadata.metadata_enhancer import MetadataEnhancer
 
 class AudioFileManager:
     ALLOWED_EXTENSIONS = {'mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'}
 
     def __init__(self, upload_folder: str):
         self.upload_folder = upload_folder
+        self.enhancer = MetadataEnhancer()
 
     def allowed_file(self, filename: str) -> bool:
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in self.ALLOWED_EXTENSIONS
@@ -17,7 +19,6 @@ class AudioFileManager:
         if not self.allowed_file(file.filename):
             raise ValueError("Unsupported file type")
         
-        #generate secure filename
         original_filename = file.filename
 
         if custom_filename:
@@ -33,31 +34,31 @@ class AudioFileManager:
         unique_filename = f"{name}_{file_hash}{ext}"
         file_path = os.path.join(self.upload_folder, unique_filename)
 
-        #save file
         file.save(file_path)
-
-        #extract metadata
-        metadata = self.extract_metadata(file_path)
-        metadata['file_path'] = file_path
-        metadata['original_filename'] = original_filename
-
+        
+        metadata = self.extract_metadata(file_path)  
+        metadata['file_path'] = file_path 
         return metadata
 
 
     def extract_metadata(self, file_path: str) -> Dict:
+
+        metadata = self._extract_embedded_tags(file_path)
+        filename = os.path.basename(file_path)
+        enhanced_metadata = self.enhancer.enhance_metadata(metadata, filename)
+        return enhanced_metadata
+
+
+    def _extract_embedded_tags(self, file_path: str) -> Dict:
         try:
             audio_file = File(file_path)
             if audio_file is None:
                 raise ValueError("Unsupported or corrupted audio file")
-            
-            # Debug: Print all available tags
-            print(f"Debug - All tags in file: {dict(audio_file)}")
-            print(f"Debug - File info: {audio_file.info}")
-            
+        
             #tag values handler
             def get_tag_value(audio_file, tag_key, default='Unknown'):
                 tag = audio_file.get(tag_key)
-                print(f"Debug - Tag {tag_key}: {tag}")  # Add this debug line back
+                print(f"Debug - Tag {tag_key}: {tag}") 
                 if tag is None:
                     return default
                 
@@ -97,6 +98,7 @@ class AudioFileManager:
                 'title': os.path.splitext(os.path.basename(file_path))[0],
                 'artist': 'Unknown',
                 'album': 'Unknown',
+                'genre': 'Unknown',
                 'duration': 0,
                 'bitrate': 0,
                 'format': os.path.splitext(file_path)[1][1:].lower(),
@@ -114,4 +116,5 @@ class AudioFileManager:
         except Exception as e:
             print(f"Error deleting file: {e}")
             return False
+
 
