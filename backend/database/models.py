@@ -8,6 +8,7 @@ class Song(db.Model):
     artist = db.Column(db.String(100), nullable=False)
     album = db.Column(db.String(100), nullable=True)
     genre = db.Column(db.String(50), nullable=True)
+    duration = db.Column(db.Float, nullable=True)
     file_path = db.Column(db.String(200), nullable=False, unique=True)
     file_size = db.Column(db.Integer, nullable=False)  # size in bytes
     bitrate = db.Column(db.Integer, nullable=True)  # bitrate in kbps

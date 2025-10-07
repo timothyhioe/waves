@@ -1,6 +1,7 @@
-from flask import Blueprint, request, jsonify, Response, current_app
+from flask import Blueprint, request, jsonify, Response, current_app, send_file
 from file_manager import AudioFileManager
 from database.models import Song, db
+from flask_cors import cross_origin
 import os
 
 songs_bp = Blueprint('songs', __name__)
@@ -24,6 +25,7 @@ def upload_song():
             artist=metadata['artist'],
             album=metadata['album'],
             genre=metadata.get('genre', 'Unknown'),
+            duration=metadata.get('duration'),
             file_path=metadata['file_path'],
             file_size=metadata['file_size'],
             bitrate=metadata.get('bitrate', 0),
@@ -47,6 +49,7 @@ def list_songs():
         'artist': song.artist,
         'album': song.album,
         'genre': song.genre,
+        'duration': song.duration,
         'file_size': song.file_size,
         'bitrate': song.bitrate,
         'format': song.format,
@@ -86,31 +89,31 @@ def delete_song(song_id):
         return jsonify({'error': 'File deletion failed'}), 500
 
 #song streaming endpoint
-@songs_bp.route('/songs/<int:song_id>/stream')
+@songs_bp.route('/songs/<int:song_id>/stream', methods=['GET'])
+#@cross_origin()
 def stream_song(song_id):
-    song = Song.query.get_or_404(song_id)
-    file_path = song.file_path
-    
-    if not os.path.exists(file_path):
-        return jsonify({'error': 'File not found'}), 404
-    
-    mime_types = {
-        'mp3': 'audio/mpeg',
-        'wav': 'audio/wav',
-        'flac': 'audio/flac',
-        'ogg': 'audio/ogg',
-        'm4a': 'audio/mp4',
-        'aac': 'audio/aac'
-    }
-    mime_type = mime_types.get(song.format.lower(), 'audio/mpeg')
-    
-    def generate():
-        with open(file_path, 'rb') as f:
-            while True:
-                chunk = f.read(4096)
-                if not chunk:
-                    break
-                yield chunk
-    
-    return Response(generate(), mimetype=mime_type)
+    try:
+        song = Song.query.get_or_404(song_id)
 
+        if not os.path.exists(song.file_path):
+            return jsonify({'error': 'Audio not found'}), 404
+        
+        mime_types = {
+            'mp3': 'audio/mpeg',
+            'wav': 'audio/wav',
+            'flac': 'audio/flac',
+            'm4a': 'audio/mp4',
+            'ogg': 'audio/ogg'
+        }
+
+        mimetype = mime_types.get(song.format.lower(), 'audio/mpeg')
+
+        return send_file(
+            song.file_path, 
+            mimetype=mimetype,
+            as_attachment=False,
+            download_name=f"{song.artist} - {song.title}.{song.format}"
+        )
+    
+    except Exception as e:
+        return jsonify({'error': 'Failed to stream audio'}), 500
