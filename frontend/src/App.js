@@ -1,0 +1,74 @@
+import React, { useEffect, useState } from 'react';
+import './App.css';
+
+// Components (we'll create these)
+import Sidebar from './components/sidebar';
+import SearchBar from './components/searchbar';
+import SongList from './components/songlist';
+import Player from './components/player';
+import UploadPage from './components/uploadpage';
+
+function App() {
+  const [songs, setSongs] = useState([]);
+  const [filteredSongs, setFilteredSongs] = useState([]);
+  const [currentPage, setCurrentPage] = useState('songs'); // 'songs' or 'upload'
+  const [currentSong, setCurrentSong] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Fetch songs from backend
+  useEffect(() => {
+    fetch('http://localhost:5000/api/songs')
+      .then(res => res.json())
+      .then(data => {
+        console.log('API Response:', data);
+        setSongs(data);
+        setFilteredSongs(data);
+      })
+      .catch(err => console.error('Error fetching songs:', err));
+  }, []);
+
+  // Filter songs based on search
+  useEffect(() => {
+    if (searchQuery) {
+      const filtered = songs.filter(song => 
+        song.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        song.artist.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        song.album.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredSongs(filtered);
+    } else {
+      setFilteredSongs(songs);
+    }
+  }, [searchQuery, songs]);
+
+  const playSong = (song) => {
+    setCurrentSong(song);
+  };
+
+  return (
+    <div className="app">
+      {/* Left Sidebar */}
+      <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      
+      {/* Main Content */}
+      <div className="main-content">
+        {/* Top Search Bar */}
+        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        
+        {/* Page Content */}
+        <div className="page-content">
+          {currentPage === 'songs' ? (
+            <SongList songs={filteredSongs} playSong={playSong} setSongs={setSongs} />
+          ) : (
+            <UploadPage setSongs={setSongs} songs={songs} />
+          )}
+        </div>
+      </div>
+      
+      {/* Bottom Player */}
+      {currentSong && <Player currentSong={currentSong} />}
+    </div>
+  );
+}
+
+export default App;

@@ -1,0 +1,165 @@
+.song-list {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.song-list-header {
+    padding: 20px 24px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.song-list-header h2 {
+    color: #333;
+    font-size: 24px;
+    margin: 0;
+}
+
+.song-table {
+    display: flex;
+    flex-direction: column;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 60px 2fr 1.5fr 1.5fr 120px 80px 80px 100px;
+    gap: 12px;
+    padding: 16px 24px;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+    color: #666;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 60px 2fr 1.5fr 1.5fr 120px 80px 80px 100px;
+    gap: 12px;
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.table-row:hover {
+    background-color: #f8f9fa;
+}
+
+.col-play {
+    display: flex;
+    justify-content: center;
+}
+
+.play-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.play-btn:hover {
+    background-color: #e9ecef;
+}
+
+.song-title {
+    font-weight: 500;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.col-artist, .col-album {
+    color: #666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.genre-tag {
+    background-color: #1db954;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.col-duration, .col-size {
+    color: #666;
+    font-size: 14px;
+}
+
+.col-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.edit-btn, .delete-btn {
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.edit-btn:hover {
+    background-color: #e3f2fd;
+}
+
+.delete-btn:hover {
+    background-color: #ffebee;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.empty-state h2 {
+    margin-bottom: 12px;
+    font-size: 32px;
+}
+
+.empty-state p {
+    font-size: 16px;
+}
+
+.table-row .col-title,
+.table-row .song-title {
+    color: #666;
+    background-color: transparent;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    .table-header, .table-row {
+        grid-template-columns: 50px 2fr 1fr 1fr 100px 70px 80px;
+    }
+    
+    .col-size {
+        display: none;
+    }
+    }
+
+    @media (max-width: 768px) {
+    .table-header, .table-row {
+        grid-template-columns: 50px 2fr 1fr 80px;
+    }
+    
+    .col-artist, .col-album, .col-genre, .col-size {
+        display: none;
+    }
+}
