@@ -8,15 +8,24 @@
 }
 
 .sidebar-header {
-    padding: 24px 20px;
+    display: flex;
+    align-items: center;
+    padding: 20px 16px;
     border-bottom: 1px solid #333;
+    justify-content: flex-start;
+    gap: 13px;
 }
 
 .sidebar-header h2 {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
 }
 
+.sidebar-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
 .sidebar-nav {
     padding: 20px 0;
     border-bottom: 1px solid #333;

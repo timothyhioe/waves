@@ -117,3 +117,6 @@ celerybeat-schedule
 
 # Uploaded files and user content
 uploads/
+
+# Music instances
+instance/

@@ -14,6 +14,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('songs'); // 'songs' or 'upload'
   const [currentSong, setCurrentSong] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [onlineSearchResults, setOnlineSearchResults] = useState([]);
 
   // Fetch songs from backend
   useEffect(() => {
@@ -53,7 +54,12 @@ function App() {
       {/* Main Content */}
       <div className="main-content">
         {/* Top Search Bar */}
-        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <SearchBar 
+        searchQuery={searchQuery} 
+        setSearchQuery={setSearchQuery} 
+        onlineSearchResults={onlineSearchResults}
+        setOnlineSearchResults={setOnlineSearchResults}
+        />
         
         {/* Page Content */}
         <div className="page-content">

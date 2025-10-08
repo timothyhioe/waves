@@ -1,13 +1,16 @@
 import React from 'react';
 import './sidebar.css';
+import wavesLogo from '../assets/waves-logo.svg';
 
 function Sidebar({ currentPage, setCurrentPage }) {
     return (
         <div className="sidebar">
         {/* App Title */}
         <div className="sidebar-header">
-            <h2>🎵 Waves</h2>
+            <img src={wavesLogo} alt="Waves Logo" className="sidebar-logo" />
+            <h2>Waves</h2>
         </div>
+        
         
         {/* Navigation */}
         <div className="sidebar-nav">
@@ -29,8 +32,6 @@ function Sidebar({ currentPage, setCurrentPage }) {
         {/* Playlists Section (for later) */}
         <div className="sidebar-section">
             <h3>Playlists</h3>
-            <div className="playlist-item">📋 Liked Songs</div>
-            <div className="playlist-item">🔥 Recently Played</div>
             <div className="playlist-add">+ Create Playlist</div>
         </div>
         

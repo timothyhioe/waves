@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, Response, current_app, send_file
 from file_manager import AudioFileManager
 from database.models import Song, db
 from flask_cors import cross_origin
+from services.music_search import MusicSearchService
 import os
 
 songs_bp = Blueprint('songs', __name__)
@@ -117,3 +118,93 @@ def stream_song(song_id):
     
     except Exception as e:
         return jsonify({'error': 'Failed to stream audio'}), 500
+    
+#search music online endpoint
+@songs_bp.route('/search', methods=['GET'])
+def search_songs():
+    query=request.args.get('q', '').strip()
+    if not query:
+        return jsonify({'error': 'No search query provided'}), 400
+    
+    limit = min(int(request.args.get('limit', 10)), 20) # limit search results to 20 max
+
+    try:
+        search_service = MusicSearchService()
+        results = search_service.search_songs_online(query, limit)
+        return jsonify({
+            'query': query,
+            'results': results,
+            'total_results': len(results)
+        }), 200
+
+
+    except Exception as e:
+        return jsonify({'error': f'Search failed: {str(e)}'}), 500
+    
+#download song from youtube endpoint
+@songs_bp.route('/download', methods=['POST'])
+def download_song():
+    """Download song from YouTube URL"""
+    data = request.get_json() 
+    youtube_url = data.get('youtube_url')
+    song_info = data.get('song_info', {})
+    
+    if not youtube_url:
+        return jsonify({'error': 'YouTube URL required'}), 400
+    
+    try:
+        search_service = MusicSearchService()
+        
+        # Download the song
+        filename = search_service.download_from_youtube(
+            youtube_url, 
+            current_app.config['UPLOAD_FOLDER']
+        )
+        
+        if not filename:
+            return jsonify({'error': 'Download failed'}), 500
+        
+        # Create metadata from song info
+        metadata = {
+            'title': song_info.get('title', 'Unknown'),
+            'artist': song_info.get('artist', 'Unknown'),
+            'album': song_info.get('album', 'Unknown'),
+            'genre': song_info.get('genre', 'Unknown'),
+            'duration': song_info.get('duration', 0),
+            'file_path': filename,
+            'file_size': os.path.getsize(filename),
+            'bitrate': 192000,  # yt-dlp default
+            'format': 'mp3'
+        }
+        
+        # Save to database
+        song = Song(
+            title=metadata['title'],
+            artist=metadata['artist'],
+            album=metadata['album'],
+            genre=metadata['genre'],
+            duration=metadata['duration'],
+            file_path=metadata['file_path'],
+            file_size=metadata['file_size'],
+            bitrate=metadata['bitrate'],
+            format=metadata['format']
+        )
+        
+        db.session.add(song)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Song downloaded successfully',
+            'song': {
+                'id': song.id,
+                'title': song.title,
+                'artist': song.artist,
+                'album': song.album
+            }
+        }), 201
+        
+    except Exception as e:
+        return jsonify({'error': f'Download failed: {str(e)}'}), 500
+
+
+

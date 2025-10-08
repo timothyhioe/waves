@@ -12,7 +12,21 @@ from routes.playlists import playlists_bp
 from routes.playlist_song import playlists_songs_bp 
 
 app = Flask(__name__)
-CORS(app)
+
+# More explicit CORS configuration
+CORS(app, 
+    origins=['http://localhost:3000', 'http://127.0.0.1:3000'],
+    allow_headers=['Content-Type', 'Authorization'],
+    methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+)
+
+# Add CORS headers manually to all responses
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///music_player.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
