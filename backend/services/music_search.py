@@ -15,43 +15,7 @@ class MusicSearchService:
         youtube_results = self._search_youtube(query, limit - len(results))
         results.extend(youtube_results)
 
-        #musicbrainz search
-        musicbrainz_results = self._search_musicbrainz(query, limit//2)
-        results.extend(musicbrainz_results)
-        
         return results
-
-
-    
-    def _search_musicbrainz(self, query: str, limit: int) -> List[Dict]:
-        try:
-            results = musicbrainzngs.search_recordings(
-                query=query, 
-                limit=limit
-            )
-
-            songs = []
-            for recording in results.get('recording-list', []):
-                artist = recording.get('artist-credit', [{}])[0].get('artist', {}).get('name', 'Unknown')
-                title = recording.get('title', 'Unknown')
-                releases = recording.get('release-list', [])
-                album = releases[0].get('title', 'Unknown') if releases else 'Unknown'
-
-                songs.append({
-                    'id': recording.get('id'),
-                    'title': title,
-                    'artist': artist,
-                    'album': album,
-                    'duration': recording.get('length', 0),
-                    'source': 'MusicBrainz',
-                    'youtube_url': None
-                })
-            
-            return songs
-        
-        except Exception as e:
-            print(f"MusicBrainz search error: {e}")
-            return []
         
     def _search_youtube(self, query: str, limit: int) -> List[Dict]:
         try:
