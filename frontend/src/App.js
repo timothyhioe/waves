@@ -72,7 +72,12 @@ function App() {
       </div>
       
       {/* Bottom Player */}
-      {currentSong && <Player currentSong={currentSong} />}
+      {currentSong && 
+      <Player 
+      currentSong={currentSong} 
+      songs={songs}
+      setCurrentSong={setCurrentSong}
+      />}
     </div>
   );
 }

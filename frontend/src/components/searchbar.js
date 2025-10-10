@@ -31,7 +31,7 @@ function SearchBar({ searchQuery, setSearchQuery, onlineSearchResults, setOnline
         if(searchQuery.length > 2) {
             const timeoutId = setTimeout(() => {
                 searchOnline(searchQuery);
-            }, 500); // 500ms waittime before triggering search
+            }, 100); // 100ms waittime before triggering search
 
             return () => clearTimeout(timeoutId);
         } 

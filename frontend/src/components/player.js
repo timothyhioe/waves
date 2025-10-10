@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './player.css';
 
-function Player({ currentSong }) {
+function Player({ currentSong, songs, setCurrentSong }) {
     const audioRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -17,6 +17,22 @@ function Player({ currentSong }) {
         }
         setIsPlaying(!isPlaying);
     };
+
+    const currentIndex = songs.findIndex(song => song.id === currentSong.id);
+
+    // Next song
+    const handleNext = () => {
+        if (currentIndex < songs.length - 1) {
+            setCurrentSong(songs[currentIndex + 1]);
+        }
+    }
+
+    // Previous song
+    const handlePrev = () => {
+        if(currentIndex > 0) {
+            setCurrentSong(songs[currentIndex - 1]);
+        }
+    }
 
     // Update progress
     const handleTimeUpdate = () => {
@@ -94,11 +110,11 @@ function Player({ currentSong }) {
         {/* Player Controls */}
         <div className="player-controls">
             <div className="control-buttons">
-            <button className="control-btn">⏮️</button>
+            <button className="control-btn" onClick={handlePrev}>⏮️</button>
             <button className="play-pause-btn" onClick={togglePlayPause}>
                 {isPlaying ? '⏸️' : '▶️'}
             </button>
-            <button className="control-btn">⏭️</button>
+            <button className="control-btn" onClick={handleNext}>⏭️</button>
             </div>
             
             <div className="progress-container">
