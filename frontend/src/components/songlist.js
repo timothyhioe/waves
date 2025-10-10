@@ -1,5 +1,9 @@
 import React from 'react';
 import './songlist.css';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+
 
 function SongList({ songs, playSong, setSongs }) { 
     const formatDuration = (seconds) => {
@@ -68,7 +72,7 @@ function SongList({ songs, playSong, setSongs }) {
                     onClick={() => playSong(song)}
                     title="Play song"
                 >
-                    ▶️
+                    <PlayCircleIcon />
                 </button>
                 </div>
                 <div className="col-title">
@@ -86,14 +90,14 @@ function SongList({ songs, playSong, setSongs }) {
                     className="edit-btn"
                     title="Edit metadata"
                 >
-                    ✏️
+                    <EditIcon />
                 </button>
                 <button 
                     className="delete-btn"
                     onClick={() => deleteSong(song.id)}
                     title="Delete song"
                 >
-                    🗑️
+                    <DeleteIcon />
                 </button>
                 </div>
             </div>

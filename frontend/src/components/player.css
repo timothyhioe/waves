@@ -123,8 +123,27 @@
 }
 
 .volume-icon {
+    background: none;
+    border: none;
+    color: #b3b3b3;
     font-size: 16px;
     margin-right: 8px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.2s, background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+volume-icon:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.volume-icon:focus {
+    outline: none;
 }
 
 .volume-slider {
