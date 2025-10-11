@@ -54,12 +54,14 @@ function App() {
       {/* Main Content */}
       <div className="main-content">
         {/* Top Search Bar */}
-        <SearchBar 
-        searchQuery={searchQuery} 
-        setSearchQuery={setSearchQuery} 
-        onlineSearchResults={onlineSearchResults}
-        setOnlineSearchResults={setOnlineSearchResults}
-        />
+        {currentPage === 'songs' && (
+          <SearchBar 
+            searchQuery={searchQuery} 
+            setSearchQuery={setSearchQuery} 
+            onlineSearchResults={onlineSearchResults}
+            setOnlineSearchResults={setOnlineSearchResults}
+          />
+        )}
         
         {/* Page Content */}
         <div className="page-content">
@@ -74,9 +76,9 @@ function App() {
       {/* Bottom Player */}
       {currentSong && 
       <Player 
-      currentSong={currentSong} 
-      songs={songs}
-      setCurrentSong={setCurrentSong}
+        currentSong={currentSong} 
+        songs={songs}
+        setCurrentSong={setCurrentSong}
       />}
     </div>
   );
