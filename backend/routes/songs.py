@@ -59,7 +59,7 @@ def list_songs():
     return jsonify(song_list), 200
 
 #listing by song_id endpoint
-@songs_bp.route('/songs/<int:song_id>', methods=['GET'])
+@songs_bp.route('/songs/<song_id>', methods=['GET'])
 def get_song(song_id):
     song = Song.query.get_or_404(song_id)
     song_data = {
@@ -76,7 +76,7 @@ def get_song(song_id):
     return jsonify(song_data), 200
 
 #song deletion endpoint
-@songs_bp.route('/songs/<int:song_id>', methods=['DELETE'])
+@songs_bp.route('/songs/<song_id>', methods=['DELETE'])
 def delete_song(song_id):
     song = Song.query.get_or_404(song_id)
     file_path = song.file_path
@@ -90,7 +90,7 @@ def delete_song(song_id):
         return jsonify({'error': 'File deletion failed'}), 500
 
 #song streaming endpoint
-@songs_bp.route('/songs/<int:song_id>/stream', methods=['GET'])
+@songs_bp.route('/songs/<song_id>/stream', methods=['GET'])
 def stream_song(song_id):
     try:
         song = Song.query.get_or_404(song_id)
