@@ -3,6 +3,7 @@ import './sidebar.css';
 import wavesLogo from '../assets/waves-logo.svg';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 function Sidebar({ currentPage, setCurrentPage }) {
     return (
@@ -22,6 +23,14 @@ function Sidebar({ currentPage, setCurrentPage }) {
                 >
                 <span> <LibraryMusicIcon/> </span>
                 <span> My Songs </span>
+            </button>
+
+            <button 
+                className={`nav-item ${currentPage === 'download' ? 'active' : ''}`}
+                onClick={() => setCurrentPage('download')}
+                >
+                <span> <CloudDownloadIcon/> </span>
+                <span> Download </span>
             </button>
             
             <button 

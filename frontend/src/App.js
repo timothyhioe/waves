@@ -6,12 +6,13 @@ import Sidebar from './components/sidebar';
 import SearchBar from './components/searchbar';
 import SongList from './components/songlist';
 import Player from './components/player';
-import UploadPage from './components/uploadpage';
+import UploadPage from './pages/uploadpage';
+import DownloadPage from './pages/downloadpage';
 
 function App() {
   const [songs, setSongs] = useState([]);
   const [filteredSongs, setFilteredSongs] = useState([]);
-  const [currentPage, setCurrentPage] = useState('songs'); // 'songs' or 'upload'
+  const [currentPage, setCurrentPage] = useState('songs'); // Fixed: only one initial value
   const [currentSong, setCurrentSong] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [onlineSearchResults, setOnlineSearchResults] = useState([]);
@@ -53,8 +54,8 @@ function App() {
       
       {/* Main Content */}
       <div className="main-content">
-        {/* Top Search Bar */}
-        {currentPage === 'songs' && (
+        {/* Top Search Bar - Fixed parentheses */}
+        {(currentPage === 'songs' || currentPage === 'download') && (
           <SearchBar 
             searchQuery={searchQuery} 
             setSearchQuery={setSearchQuery} 
@@ -67,9 +68,16 @@ function App() {
         <div className="page-content">
           {currentPage === 'songs' ? (
             <SongList songs={filteredSongs} playSong={playSong} setSongs={setSongs} />
-          ) : (
+          ) : currentPage === 'upload' ? (
             <UploadPage setSongs={setSongs} songs={songs} />
-          )}
+          ) : currentPage === 'download' ? (
+            <DownloadPage 
+              setSongs={setSongs} 
+              songs={songs}
+              searchQuery={searchQuery}
+              onlineSearchResults={onlineSearchResults}
+            />
+          ) : null}
         </div>
       </div>
       

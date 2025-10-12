@@ -91,13 +91,24 @@ def delete_song(song_id):
 
 #song streaming endpoint
 @songs_bp.route('/songs/<int:song_id>/stream', methods=['GET'])
-#@cross_origin()
 def stream_song(song_id):
     try:
         song = Song.query.get_or_404(song_id)
+        
+        print(f"Streaming song: {song.title}")  # Debug
+        print(f"File path in DB: {song.file_path}")  # Debug
 
-        if not os.path.exists(song.file_path):
-            return jsonify({'error': 'Audio not found'}), 404
+        # Build the full file path
+        if os.path.isabs(song.file_path):
+            file_path = song.file_path
+        else:
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], song.file_path)
+        
+        print(f"Full file path: {file_path}")  # Debug
+        print(f"File exists: {os.path.exists(file_path)}")  # Debug
+
+        if not os.path.exists(file_path):
+            return jsonify({'error': 'Audio file not found'}), 404
         
         mime_types = {
             'mp3': 'audio/mpeg',
@@ -110,13 +121,14 @@ def stream_song(song_id):
         mimetype = mime_types.get(song.format.lower(), 'audio/mpeg')
 
         return send_file(
-            song.file_path, 
+            file_path,  # Use the calculated file_path
             mimetype=mimetype,
             as_attachment=False,
             download_name=f"{song.artist} - {song.title}.{song.format}"
         )
     
     except Exception as e:
+        print(f"Streaming error: {e}")  # Debug
         return jsonify({'error': 'Failed to stream audio'}), 500
     
 #search music online endpoint
@@ -156,13 +168,16 @@ def download_song():
         search_service = MusicSearchService()
         
         # Download the song
-        filename = search_service.download_from_youtube(
+        full_filename = search_service.download_from_youtube(
             youtube_url, 
             current_app.config['UPLOAD_FOLDER']
         )
         
-        if not filename:
+        if not full_filename:
             return jsonify({'error': 'Download failed'}), 500
+        
+        # Extract filename
+        filename = os.path.basename(full_filename)
         
         # Create metadata from song info
         metadata = {
@@ -172,7 +187,7 @@ def download_song():
             'genre': song_info.get('genre', 'Unknown'),
             'duration': song_info.get('duration', 0),
             'file_path': filename,
-            'file_size': os.path.getsize(filename),
+            'file_size': os.path.getsize(full_filename),
             'bitrate': 192000,  # yt-dlp default
             'format': 'mp3'
         }
@@ -205,6 +220,3 @@ def download_song():
         
     except Exception as e:
         return jsonify({'error': f'Download failed: {str(e)}'}), 500
-
-
-

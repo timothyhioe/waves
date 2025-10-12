@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './searchbar.css';
+import LoopIcon from '@mui/icons-material/Loop';
 
 function SearchBar({ searchQuery, setSearchQuery, onlineSearchResults, setOnlineSearchResults }) {
     const[showOnlineResults, setShowOnlineResults] = React.useState(false);
@@ -80,70 +81,31 @@ function SearchBar({ searchQuery, setSearchQuery, onlineSearchResults, setOnline
 
     return (
         <div className="search-bar">
-        <div className="search-container">
-            <div className="search-icon">🔍</div>
-            <input
-            type="text"
-            placeholder="Search your songs or find new ones online..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-            />
-            {searchQuery && (
-            <button 
-                className="clear-search"
-                onClick={() => {
-                setSearchQuery('');
-                setShowOnlineResults(false);
-                }}
-            >
-                ✕
-            </button>
-            )}
-            
-            {isSearching && (
-            <div className="search-loading">🔄</div>
-            )}
-        </div>
-
-        {/* Online Search Results */}
-        {showOnlineResults && onlineSearchResults.length > 0 && (
-            <div className="online-results">
-            <div className="results-header">
-                <h4>🌐 Found online ({onlineSearchResults.length})</h4>
-            </div>
-            
-            {onlineSearchResults.map((song, index) => (
-                <div key={`${song.source}-${song.id}-${index}`} className="result-item">
-                <div className="song-info">
-                    <div className="song-title">{song.title}</div>
-                    <div className="song-details">
-                    {song.artist} • {song.title} • {song.source}
-                    {song.duration > 0 && (
-                        <span> • {Math.floor(song.duration / 60)}:{(song.duration % 60).toString().padStart(2, '0')}</span>
-                    )}
-                    </div>
-                </div>
-                
-                {song.youtube_url ? (
-                    <button 
-                    className="download-btn"
-                    onClick={() => handleDownload(song)}
-                    >
-                    ⬇️ Download
-                    </button>
-                ) : (
-                    <button 
-                    className="search-youtube-btn"
-                    onClick={() => window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(song.artist + ' ' + song.title)}`, '_blank')}
-                    >
-                    🔍 Find on YouTube
-                    </button>
+            <div className="search-container">
+                <div className="search-icon">🔍</div>
+                <input
+                type="text"
+                placeholder="Search your songs or find new ones online..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+                />
+                {searchQuery && (
+                <button 
+                    className="clear-search"
+                    onClick={() => {
+                    setSearchQuery('');
+                    setShowOnlineResults(false);
+                    }}
+                >
+                    ✕
+                </button>
                 )}
-                </div>
-            ))}
+                
+                {isSearching && (
+                <div className="search-loading"><LoopIcon/></div>
+                )}
             </div>
-        )}
         </div>
     );
 }

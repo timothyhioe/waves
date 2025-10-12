@@ -37,7 +37,7 @@ class AudioFileManager:
         file.save(file_path)
         
         metadata = self.extract_metadata(file_path)  
-        metadata['file_path'] = file_path 
+        metadata['file_path'] = unique_filename
         return metadata
 
 
