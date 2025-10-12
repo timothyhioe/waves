@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: waves_backend
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://waves_user:waves_password@host.docker.internal:5432/waves_music
+      UPLOAD_FOLDER: /app/uploads
+      FLASK_ENV: development
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend:/app
+    network_mode: host 
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: waves_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:5000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+volumes:
+  uploads_data:
