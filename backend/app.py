@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from routes.songs import songs_bp
 from routes.playlists import playlists_bp  
 from routes.playlist_song import playlists_songs_bp 
+from routes.users import auth_bp
 
 app = Flask(__name__)
 
@@ -37,11 +38,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB limit
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'supersecretkey')
 
 db.init_app(app)
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+app.register_blueprint(auth_bp, url_prefix='/api')
 app.register_blueprint(songs_bp, url_prefix='/api')
 app.register_blueprint(playlists_bp, url_prefix='/api')
 app.register_blueprint(playlists_songs_bp, url_prefix='/api') 
