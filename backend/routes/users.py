@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify, current_app
 from database.models import User, db
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import re
+import jwt
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -24,6 +25,24 @@ def validate_password(password):
     if not re.search(r'[0-9]', password):
         return False, "Password must contain at least one number"
     return True, "Valid"
+    
+def generate_token(user_id):
+    try:
+        payload = {
+            'user_id': str(user_id),
+            'exp': datetime.now(timezone.utc) + timedelta(days = 7),  # Token valid for 7 days
+            'iat' : datetime.now(timezone.utc) # Issued at
+        }
+        token = jwt.encode(
+            payload,
+            current_app.config['SECRET_KEY'],
+            algorithm='HS256'
+            )
+        return token
+    
+    except Exception as e:
+        current_app.logger.error(f"Token generation error: {e}")
+        return None
 
 #registration endpoint
 @auth_bp.route('/register', methods=['POST'])
@@ -34,8 +53,8 @@ def register():
         if not data:
             return jsonify({'error': 'No data provided'}), 400
         
-        username = data.get('username', '').strip()
-        email = data.get('email', '').strip()
+        username = data.get('username', '').strip().lower()
+        email = data.get('email', '').strip().lower()
         password = data.get('password', '').strip()
 
         if not username:
@@ -101,3 +120,54 @@ def check_email(email):
         'available': user is None,
         'email': email
     }), 200
+
+
+#login endpoint
+@auth_bp.route('/login', methods=['POST'])
+def login():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        username_or_email = data.get('username', '').strip().lower()
+        password = data.get('password', '')
+
+        if not username_or_email:
+            return jsonify({'error': 'Username or email is required'}), 400
+        if not password:
+            return jsonify({'error': 'Password is required'}), 400
+        
+        #find user by username or email
+        user = User.query.filter(
+            (User.username == username_or_email) | (User.email == username_or_email)
+        ).first()
+
+        #check if user exists
+        if not user:
+            return jsonify({'error': 'Invalid credentials'}), 401
+        
+        #check pw
+        if not user.check_password(password):
+            return jsonify({'error': 'Invalid credentials'}), 401
+        
+        #update last login timestamp
+        user.last_login = datetime.now(timezone.utc)
+        db.session.commit()
+
+        #generate auth token
+        token = generate_token(user.id)
+
+        if not token:
+            return jsonify({'error': 'Token generation failed'}), 500
+        
+        return jsonify({
+            'message': 'Login successful',
+            'user': user.to_dict(),
+            'token': token
+        }), 200
+        
+    except Exception as e:
+        current_app.logger.error(f"Login error: {e}")
+        return jsonify({'error': str(e)}), 500
+
