@@ -3,6 +3,8 @@ from database.models import User, db
 from datetime import datetime, timezone, timedelta
 import re
 import jwt
+from auth_middleware import token_required, optional_token
+
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -171,3 +173,69 @@ def login():
         current_app.logger.error(f"Login error: {e}")
         return jsonify({'error': str(e)}), 500
 
+@auth_bp.route('/me', methods=['GET'])
+@token_required
+def get_current_user(current_user):
+    """
+    Get current authenticated user's profile
+    Requires valid JWT token in Authorization header
+    """
+    return jsonify({
+        'user': current_user.to_dict()
+    }), 200
+
+@auth_bp.route('/verify-token', methods=['POST'])
+def verify_token_endpoint():
+    """
+    Verify if a token is valid
+    Expected JSON body: {"token": "jwt_token_string"}
+    """
+    data = request.get_json()
+    token = data.get('token')
+    
+    if not token:
+        return jsonify({'valid': False, 'error': 'No token provided'}), 400
+    
+    try:
+        payload = jwt.decode(
+            token,
+            current_app.config['SECRET_KEY'],
+            algorithms=['HS256']
+        )
+        user_id = payload['user_id']
+        user = User.query.get(user_id)
+        
+        if not user:
+            return jsonify({'valid': False, 'error': 'User not found'}), 404
+        
+        return jsonify({
+            'valid': True,
+            'user': user.to_dict(),
+            'expires_at': datetime.fromtimestamp(payload['exp'], timezone.utc).isoformat()
+        }), 200
+        
+    except jwt.ExpiredSignatureError:
+        return jsonify({'valid': False, 'error': 'Token expired'}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({'valid': False, 'error': 'Invalid token'}), 401
+    except Exception as e:
+        current_app.logger.error(f"Token verification error: {e}")
+        return jsonify({'valid': False, 'error': 'Verification failed'}), 500
+
+@auth_bp.route('/refresh-token', methods=['POST'])
+@token_required
+def refresh_token(current_user):
+    """
+    Refresh JWT token (extend expiration)
+    Requires valid JWT token in Authorization header
+    """
+    new_token = generate_token(current_user.id)
+    
+    if not new_token:
+        return jsonify({'error': 'Failed to generate new token'}), 500
+    
+    return jsonify({
+        'message': 'Token refreshed successfully',
+        'token': new_token,
+        'user': current_user.to_dict()
+    }), 200
