@@ -55,7 +55,7 @@ def register():
         if not data:
             return jsonify({'error': 'No data provided'}), 400
         
-        username = data.get('username', '').strip().lower()
+        username = data.get('username', '').strip()
         email = data.get('email', '').strip().lower()
         password = data.get('password', '').strip()
 
@@ -95,9 +95,14 @@ def register():
         #save to database
         db.session.add(new_user)
         db.session.commit()
+
+        #generate token for auto-login after registration
+        token = generate_token(new_user.id)
+
         return jsonify({
             'message': 'User registered successfully',
-            'user': new_user.to_dict()
+            'user': new_user.to_dict(),
+            'token': token
             }), 201
     
     except Exception as e:
@@ -132,7 +137,7 @@ def login():
         if not data:
             return jsonify({'error': 'No data provided'}), 400
         
-        username_or_email = data.get('username', '').strip().lower()
+        username_or_email = data.get('username', '').strip()
         password = data.get('password', '')
 
         if not username_or_email:
@@ -203,9 +208,9 @@ def verify_token_endpoint():
             algorithms=['HS256']
         )
         user_id = payload['user_id']
-        user = User.query.get(user_id)
+        current_user = db.session.get(User, user_id)
         
-        if not user:
+        if not current_user:
             return jsonify({'valid': False, 'error': 'User not found'}), 404
         
         return jsonify({
