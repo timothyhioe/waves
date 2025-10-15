@@ -4,12 +4,15 @@ from database.models import Song, db
 from flask_cors import cross_origin
 from services.music_search import MusicSearchService
 import os
+import uuid
+from auth_middleware import token_required
 
 songs_bp = Blueprint('songs', __name__)
 
 #song upload endpoint
 @songs_bp.route('/songs', methods=['POST'])
-def upload_song():
+@token_required
+def upload_song(current_user):
     file = request.files.get('file')
     if not file:
         return jsonify({'error': 'No file provided'}), 400
@@ -21,7 +24,7 @@ def upload_song():
     
     try:
         metadata = manager.save_file(file)
-        song = Song(
+        new_song = Song(
             title=metadata['title'],
             artist=metadata['artist'],
             album=metadata['album'],
@@ -30,73 +33,130 @@ def upload_song():
             file_path=metadata['file_path'],
             file_size=metadata['file_size'],
             bitrate=metadata.get('bitrate', 0),
-            format=metadata['format']
+            format=metadata['format'],
+            user_id=current_user.id
         )
-        db.session.add(song)
+        db.session.add(new_song)
         db.session.commit()
-        return jsonify({'message': 'File uploaded successfully', 'song_id': song.id}), 201
+        return jsonify({
+            'message': 'Song uploaded successfully',
+            'song': {
+                'id': str(new_song.id),
+                'title': new_song.title,
+                'artist': new_song.artist,
+                'album': new_song.album
+            }
+        }), 201
     
     
     except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Upload error: {e}")
         return jsonify({'error': str(e)}), 500
 
 #song listing endpoint
 @songs_bp.route('/songs', methods=['GET'])
-def list_songs():
-    songs = Song.query.all()
-    song_list = [{
-        'id': song.id,
-        'title': song.title,
-        'artist': song.artist,
-        'album': song.album,
-        'genre': song.genre,
-        'duration': song.duration,
-        'file_size': song.file_size,
-        'bitrate': song.bitrate,
-        'format': song.format,
-        'upload_date': song.upload_date
-    } for song in songs]
-    return jsonify(song_list), 200
+@token_required
+def list_songs(current_user):
+    try:
+        songs = Song.query.filter_by(user_id = current_user.id).order_by(Song.upload_date.desc()).all()
+        song_list = [{
+            'id': song.id,
+            'title': song.title,
+            'artist': song.artist,
+            'album': song.album,
+            'genre': song.genre,
+            'duration': song.duration,
+            'file_size': song.file_size,
+            'bitrate': song.bitrate,
+            'format': song.format,
+            'upload_date': song.upload_date
+        } for song in songs]
+        return jsonify({
+            'songs': song_list,
+            'total_songs': len(song_list)
+        }), 200
+    
+    except Exception as e:
+        current_app.logger.error(f"Error listing songs: {e}")
+        return jsonify({'error': 'Failed to list songs'}), 500
 
 #listing by song_id endpoint
 @songs_bp.route('/songs/<song_id>', methods=['GET'])
-def get_song(song_id):
-    song = Song.query.get_or_404(song_id)
-    song_data = {
-        'id': song.id,
-        'title': song.title,
-        'artist': song.artist,
-        'album': song.album,
-        'genre': song.genre,
-        'file_size': song.file_size,
-        'bitrate': song.bitrate,
-        'format': song.format,
-        'upload_date': song.upload_date
-    }
-    return jsonify(song_data), 200
+def get_song(current_user, song_id):
+    try:
+        #validate uuid format
+        uuid.UUID(song_id)
+
+        song = Song.query.filter_by(id=song_id, user_id=current_user.id).first()
+
+        if not song:
+            return jsonify({'error': 'Song not found'}), 404
+        
+        return jsonify({
+            'id': str(song.id),
+            'title': song.title,
+            'artist': song.artist,
+            'album': song.album,
+            'genre': song.genre,
+            'duration': song.duration,
+            'file_size': song.file_size,
+            'bitrate': song.bitrate,
+            'format': song.format,
+            'upload_date': song.upload_date.isoformat() if song.upload_date else None
+        }), 200
+
+    except ValueError:
+        return jsonify({'error': 'Invalid song ID format'}), 400
+    
+    except Exception as e:
+        current_app.logger.error(f"Error retrieving song: {e}")
+        return jsonify({'error': 'Failed to retrieve song'}), 500
+    
 
 #song deletion endpoint
 @songs_bp.route('/songs/<song_id>', methods=['DELETE'])
-def delete_song(song_id):
-    song = Song.query.get_or_404(song_id)
-    file_path = song.file_path
+@token_required
+def delete_song(current_user, song_id):
+    try:
+        #validate uuid format
+        uuid.UUID(song_id)
+        song = Song.query.filter_by(id=song_id, user_id=current_user.id).first()
+        file_path = song.file_path
 
-    manager = AudioFileManager(current_app.config['UPLOAD_FOLDER'])
-    if manager.delete_file(file_path):
+        if not song:
+            return jsonify({'error': 'Song not found'}), 404
+
+        # Delete file from filesystem
+        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], song.file_path)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        
+        # Delete from database
         db.session.delete(song)
         db.session.commit()
+        
         return jsonify({'message': 'Song deleted successfully'}), 200
-    else:
-        return jsonify({'error': 'File deletion failed'}), 500
+        
+    except ValueError:
+        return jsonify({'error': 'Invalid song ID format'}), 400
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Delete error: {e}")
+        return jsonify({'error': 'Failed to delete song'}), 500
 
 #song streaming endpoint
 @songs_bp.route('/songs/<song_id>/stream', methods=['GET'])
-def stream_song(song_id):
+@token_required
+def stream_song(current_user, song_id):
     try:
-        song = Song.query.get_or_404(song_id)
+        #validate uuid format
+        uuid.UUID(song_id)
+
+        song = Song.query.filter_by(id=song_id, user_id=current_user.id).first()
         
-        print(f"Streaming song: {song.title}")  # Debug
-        print(f"File path in DB: {song.file_path}")  # Debug
+        if not song:
+            return jsonify({'error': 'Song not found'}), 404
 
         # Build the full file path
         if os.path.isabs(song.file_path):
@@ -127,6 +187,8 @@ def stream_song(song_id):
             download_name=f"{song.artist} - {song.title}.{song.format}"
         )
     
+    except ValueError:
+        return jsonify({'error': 'Invalid song ID format'}), 400
     except Exception as e:
         print(f"Streaming error: {e}")  # Debug
         return jsonify({'error': 'Failed to stream audio'}), 500
