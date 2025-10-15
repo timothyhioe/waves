@@ -2,6 +2,7 @@ from functools import wraps
 from flask import request, jsonify, current_app
 import jwt
 from database.models import User
+from database import db
 
 def token_required(f):
     """
@@ -42,7 +43,7 @@ def token_required(f):
 
             #get user from db
             user_id = payload['user_id']
-            current_user = User.query.get(user_id)
+            current_user = db.session.get(User, user_id) 
 
             if not current_user:
                 return jsonify({'error': 'User not found'}), 404
@@ -90,7 +91,7 @@ def optional_token(f):
                 )
                 
                 user_id = payload['user_id']
-                current_user = User.query.get(user_id)
+                current_user = db.session.get(User, user_id)  
                 
             except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, Exception):
                 #token invalid or expired, but route continues with current_user=None
@@ -112,7 +113,7 @@ def verify_token(token):
             algorithms=['HS256']
         )
         user_id = payload['user_id']
-        return User.query.get(user_id)
+        return db.session.get(User, user_id) 
     except Exception:
         return None
 
