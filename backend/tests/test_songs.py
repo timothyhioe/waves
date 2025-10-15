@@ -1,7 +1,6 @@
 import unittest
 import io
 import json
-import os
 from app import app
 from database import db
 from database.models import User, Song
@@ -10,7 +9,6 @@ class SongTestCase(unittest.TestCase):
     def setUp(self):
         self.app = app
         self.app.config['TESTING'] = True
-        # Use in-memory SQLite for tests (auto-created, auto-destroyed)
         self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         self.client = self.app.test_client()
         with self.app.app_context():

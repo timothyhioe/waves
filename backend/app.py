@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 
 from routes.songs import songs_bp
 from routes.playlists import playlists_bp  
-from routes.playlist_song import playlists_songs_bp 
 from routes.users import auth_bp
 
 app = Flask(__name__)
@@ -47,7 +46,6 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 app.register_blueprint(auth_bp, url_prefix='/api')
 app.register_blueprint(songs_bp, url_prefix='/api')
 app.register_blueprint(playlists_bp, url_prefix='/api')
-app.register_blueprint(playlists_songs_bp, url_prefix='/api') 
 
 @app.route('/api/health')
 def health_check():
