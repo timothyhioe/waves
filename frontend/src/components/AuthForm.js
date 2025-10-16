@@ -25,6 +25,19 @@ const AuthForm = () => {
         return emailRegex.test(email);
     };
 
+    const validatePassword = (password) => {
+        if (password.length < 8) {
+            return "Password must be at least 8 characters long";
+        }
+        if (!/[A-Za-z]/.test(password)) {
+            return "Password must contain at least one letter";
+        }
+        if (!/[0-9]/.test(password)) {
+            return "Password must contain at least one number";
+        }
+        return "";
+    }
+
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
         const errors = {};
@@ -104,8 +117,11 @@ const AuthForm = () => {
 
         if (!registerData.password) {
         errors.password = "Password is required";
-        } else if (registerData.password.length < 6) {
-        errors.password = "Password must be at least 6 characters";
+        } else {
+            const passwordError = validatePassword(registerData.password);
+            if (passwordError) {
+                errors.password = passwordError;
+            }
         }
 
         if (!registerData.confirmPassword) {

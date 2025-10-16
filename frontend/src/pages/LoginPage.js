@@ -19,7 +19,6 @@ const LoginPage = () => {
         <AuthForm />
 
         <footer className="login-footer">
-          <p>&copy; 2025 Waves. All rights reserved.</p>
           <div className="footer-links">
             <a href="#privacy">Privacy Policy</a>
             <span className="separator">•</span>
