@@ -231,7 +231,8 @@ def search_songs():
     
 #download song from youtube endpoint
 @songs_bp.route('/download', methods=['POST'])
-def download_song():
+@token_required
+def download_song(current_user):
     """Download song from YouTube URL"""
     data = request.get_json() 
     youtube_url = data.get('youtube_url')
@@ -278,7 +279,8 @@ def download_song():
             file_path=metadata['file_path'],
             file_size=metadata['file_size'],
             bitrate=metadata['bitrate'],
-            format=metadata['format']
+            format=metadata['format'],
+            user_id=current_user.id 
         )
         
         db.session.add(song)
@@ -287,7 +289,7 @@ def download_song():
         return jsonify({
             'message': 'Song downloaded successfully',
             'song': {
-                'id': song.id,
+                'id': str(song.id),  
                 'title': song.title,
                 'artist': song.artist,
                 'album': song.album
@@ -295,4 +297,6 @@ def download_song():
         }), 201
         
     except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Download error: {e}")
         return jsonify({'error': f'Download failed: {str(e)}'}), 500
