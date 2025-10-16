@@ -111,7 +111,8 @@
   color: #666;
 }
 
-.download-btn, .search-youtube-btn {
+.download-btn,
+.search-youtube-btn {
   background: #1db954;
   color: white;
   border: none;
@@ -143,18 +144,22 @@
 }
 
 @keyframes spin {
-  from { transform: translateY(-50%) rotate(0deg); }
-  to { transform: translateY(-50%) rotate(360deg); }
+  from {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
-    .search-bar {
-        padding: 15px 20px;
-    }
-    
-    .search-input {
-        font-size: 14px;
-        padding: 10px 40px 10px 40px;
-    }
+  .search-bar {
+    padding: 15px 20px;
+  }
+
+  .search-input {
+    font-size: 14px;
+    padding: 10px 40px 10px 40px;
+  }
 }
