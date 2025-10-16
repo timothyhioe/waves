@@ -1,15 +1,14 @@
-import React from 'react';
-import './songlist.css';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import React from "react";
+import "./songlist.css";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 
-
-function SongList({ songs, playSong, setSongs }) { 
+function SongList({ songs, playSong, setSongs }) {
     const formatDuration = (seconds) => {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = Math.floor(seconds % 60);
-        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
     };
 
     const formatFileSize = (bytes) => {
@@ -18,21 +17,28 @@ function SongList({ songs, playSong, setSongs }) {
     };
 
     const deleteSong = async (songId) => {
-        if (window.confirm('Are you sure you want to delete this song?')) {
+        if (window.confirm("Are you sure you want to delete this song?")) {
         try {
-            const response = await fetch(`http://localhost:5000/api/songs/${songId}`, {
-            method: 'DELETE',
-            });
-            
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+            `http://localhost:5000/api/songs/${songId}`,
+            {
+                method: "DELETE",
+                headers: {
+                Authorization: `Bearer ${token}`,
+                },
+            },
+            );
+
             if (response.ok) {
             // Remove song from local state
-            setSongs(songs.filter(song => song.id !== songId));
+            setSongs(songs.filter((song) => song.id !== songId));
             } else {
-            alert('Failed to delete song');
+            alert("Failed to delete song");
             }
         } catch (error) {
-            console.error('Error deleting song:', error);
-            alert('Error deleting song');
+            console.error("Error deleting song:", error);
+            alert("Error deleting song");
         }
         }
     };
@@ -51,7 +57,7 @@ function SongList({ songs, playSong, setSongs }) {
         <div className="song-list-header">
             <h2>My Songs ({songs.length})</h2>
         </div>
-        
+
         <div className="song-table">
             <div className="table-header">
             <div className="col-play"></div>
@@ -63,11 +69,11 @@ function SongList({ songs, playSong, setSongs }) {
             <div className="col-size">Size</div>
             <div className="col-actions">Actions</div>
             </div>
-            
+
             {songs.map((song, index) => (
             <div key={song.id} className="table-row">
                 <div className="col-play">
-                <button 
+                <button
                     className="play-btn"
                     onClick={() => playSong(song)}
                     title="Play song"
@@ -86,13 +92,10 @@ function SongList({ songs, playSong, setSongs }) {
                 <div className="col-duration">{formatDuration(song.duration)}</div>
                 <div className="col-size">{formatFileSize(song.file_size)}</div>
                 <div className="col-actions">
-                <button 
-                    className="edit-btn"
-                    title="Edit metadata"
-                >
+                <button className="edit-btn" title="Edit metadata">
                     <EditIcon />
                 </button>
-                <button 
+                <button
                     className="delete-btn"
                     onClick={() => deleteSong(song.id)}
                     title="Delete song"

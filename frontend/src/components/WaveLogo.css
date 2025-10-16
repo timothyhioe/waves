@@ -1,0 +1,26 @@
+.logo-svg {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 2rem;
+    filter: drop-shadow(0 4px 12px rgba(44, 170, 168, 0.3));
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Responsive sizing */
+@media (max-width: 768px) {
+    .logo-svg {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 1.5rem;
+    }
+}
