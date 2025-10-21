@@ -112,7 +112,11 @@ export function PlayerBar({
   // Previous song
   const handlePrev = () => {
     if (songs && songs.length > 0 && currentIndex > 0) {
-      setCurrentSong(songs[currentIndex - 1]);
+      if(audioRef.current && audioRef.current.currentTime < 5){ //only go to prev song if current time is less than 5 seconds
+        setCurrentSong(songs[currentIndex - 1]);
+      }else{
+        audioRef.current.currentTime = 0;
+      }
     }
   };
 
