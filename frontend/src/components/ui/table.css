@@ -1,0 +1,31 @@
+.ui-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ui-table-header {
+  background: #f9fafb;
+}
+
+.ui-table-head {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #0a2342;
+  font-size: 0.875rem;
+  border-bottom: 2px solid #e8f7f7;
+}
+
+.ui-table-row {
+  transition: background 0.2s ease;
+}
+
+.ui-table-body .ui-table-row:hover {
+  background: #f9fafb;
+}
+
+.ui-table-cell {
+  padding: 1rem;
+  color: #0a2342;
+  border-bottom: 1px solid #e8f7f7;
+}

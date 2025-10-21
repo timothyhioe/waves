@@ -1,0 +1,259 @@
+.download {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.download-header {
+  margin-bottom: 1.5rem;
+}
+
+.download-header h2 {
+  color: #1a3a52;
+  margin-bottom: 0.5rem;
+}
+
+.download-header p {
+  color: #666;
+}
+
+.download-search-container {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.download-search {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.download-search-icon {
+  color: #26c6da;
+  flex-shrink: 0;
+}
+
+.download-search-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.download-search-input:focus {
+  outline: none;
+  border-color: #26c6da;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(38, 198, 218, 0.1);
+}
+
+.download-search-btn {
+  background: linear-gradient(135deg, #26c6da, #4dd0e1);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.download-search-btn:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(38, 198, 218, 0.3);
+  transform: translateY(-1px);
+}
+
+.download-search-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Results Section */
+.download-results {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.download-results-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.download-results-header h3 {
+  color: #1a3a52;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Table */
+.download-table {
+  width: 100%;
+}
+
+.download-table-header,
+.download-table-row {
+  display: grid;
+  grid-template-columns: 60px 2fr 1.5fr 120px 100px 150px;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+}
+
+.download-table-header {
+  background: #f5f5f5;
+  font-weight: 600;
+  color: #666;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.download-table-row {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+
+.download-table-row:hover {
+  background: #f9f9f9;
+}
+
+/* Column Styles */
+.col-play,
+.col-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.col-title {
+  font-weight: 500;
+  color: #1a3a52;
+}
+
+.col-artist {
+  color: #666;
+}
+
+.col-source {
+  display: flex;
+  justify-content: center;
+}
+
+.col-duration {
+  text-align: center;
+  color: #666;
+}
+
+.source-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  background: #fff3e0;
+  color: #f57c00;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Buttons */
+.download-play-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #26c6da, #4dd0e1);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.download-play-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(38, 198, 218, 0.3);
+}
+
+.download-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #26c6da, #4dd0e1);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.download-action-btn:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(38, 198, 218, 0.3);
+  transform: translateY(-1px);
+}
+
+.download-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Empty States */
+.download-info,
+.download-empty {
+  background: white;
+  border-radius: 12px;
+  padding: 3rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.download-info-icon,
+.download-empty-icon {
+  color: #e0e0e0;
+  margin-bottom: 1rem;
+}
+
+.download-info-title,
+.download-empty h3 {
+  color: #1a3a52;
+  margin-bottom: 0.75rem;
+}
+
+.download-info-text,
+.download-empty p {
+  color: #666;
+  line-height: 1.8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .download-table-header,
+  .download-table-row {
+    grid-template-columns: 50px 1fr 100px;
+    gap: 0.5rem;
+  }
+
+  .col-artist,
+  .col-source,
+  .col-duration {
+    display: none;
+  }
+
+  .col-title {
+    grid-column: span 1;
+  }
+}

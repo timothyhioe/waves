@@ -1,0 +1,98 @@
+.mysongs {
+  padding: 1.5rem;
+}
+
+.mysongs-header {
+  margin-bottom: 1.5rem;
+}
+
+.mysongs-header h2 {
+  color: #0a2342;
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.mysongs-header p {
+  color: #666;
+  margin: 0;
+}
+
+.mysongs-table-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e8f7f7;
+  overflow: hidden;
+}
+
+.mysongs-table-header-row {
+  background: #f9fafb !important;
+}
+
+.mysongs-table-index {
+  width: 50px !important;
+}
+
+.mysongs-table-actions {
+  width: 80px !important;
+}
+
+.mysongs-table-row {
+  transition: background 0.2s ease;
+}
+
+.mysongs-table-row:hover {
+  background: #f9fafb !important;
+}
+
+.mysongs-index {
+  color: #999 !important;
+}
+
+.mysongs-title-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mysongs-play-btn {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #26c6da, #4dd0e1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.mysongs-play-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(38, 198, 218, 0.3);
+}
+
+.mysongs-genre-badge {
+  padding: 0.375rem 0.75rem;
+  background: rgba(38, 198, 218, 0.1);
+  color: #26c6da;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.mysongs-menu-btn {
+  padding: 0.5rem !important;
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.mysongs-empty {
+  text-align: center !important;
+  padding: 3rem 1rem !important;
+  color: #999 !important;
+}

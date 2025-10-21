@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import "./uploadpage.css";
+import React, { useState } from 'react';
+import { toast } from '../components/ui/sonner';
+import './UploadPage.css';
 
-function UploadPage({ setSongs, songs }) {
+export function UploadPage({ onUpload }) {
   const [dragActive, setDragActive] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState([]);
@@ -46,7 +47,7 @@ function UploadPage({ setSongs, songs }) {
     );
 
     if (audioFiles.length === 0) {
-      alert("Please select valid audio files (.mp3, .wav, .m4a, .flac, .ogg)");
+      toast.error("Please select valid audio files (.mp3, .wav, .m4a, .flac, .ogg)");
       return;
     }
 
@@ -75,7 +76,7 @@ function UploadPage({ setSongs, songs }) {
 
         if (response.ok) {
           const newSong = await response.json();
-          setSongs((prevSongs) => [...prevSongs, newSong.song || newSong]);
+          if (onUpload) onUpload(newSong.song || newSong);
 
           // Update progress
           setUploadProgress((prev) =>
@@ -111,7 +112,7 @@ function UploadPage({ setSongs, songs }) {
   };
 
   return (
-    <div className="upload-page">
+    <div className="upload">
       <div className="upload-header">
         <h2>Upload Music</h2>
         <p>Drag and drop your audio files here, or click to browse</p>
@@ -129,7 +130,7 @@ function UploadPage({ setSongs, songs }) {
           <div className="upload-icon">🎵</div>
           <h3>Drop your music files here</h3>
           <p>or click to browse your computer</p>
-          <div className="supported-formats">
+          <div className="upload-supported-formats">
             <small>Supports: MP3, WAV, M4A, FLAC, OGG</small>
           </div>
         </div>
@@ -149,19 +150,19 @@ function UploadPage({ setSongs, songs }) {
         <div className="upload-progress">
           <h3>Uploading Files...</h3>
           {uploadProgress.map((item, index) => (
-            <div key={index} className="progress-item">
-              <div className="progress-info">
-                <span className="file-name">{item.name}</span>
-                <span className={`status ${item.status}`}>
+            <div key={index} className="upload-progress-item">
+              <div className="upload-progress-info">
+                <span className="upload-file-name">{item.name}</span>
+                <span className={`upload-status ${item.status}`}>
                   {item.status === "uploading" && "⏳ Uploading..."}
                   {item.status === "completed" && "✅ Completed"}
                   {item.status === "error" && "❌ Error"}
                 </span>
               </div>
               {item.status === "uploading" && (
-                <div className="progress-bar">
+                <div className="upload-progress-bar">
                   <div
-                    className="progress-fill"
+                    className="upload-progress-fill"
                     style={{ width: `${item.progress}%` }}
                   />
                 </div>
@@ -188,5 +189,3 @@ function UploadPage({ setSongs, songs }) {
     </div>
   );
 }
-
-export default UploadPage;

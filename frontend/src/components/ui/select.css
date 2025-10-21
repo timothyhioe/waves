@@ -1,0 +1,59 @@
+.select-container {
+  position: relative;
+  width: 100%;
+}
+
+.select-trigger {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e8f7f7;
+  border-radius: 12px;
+  background: white;
+  color: #0a2342;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.select-trigger:hover {
+  border-color: #2caaa8;
+}
+
+.select-content {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #e8f7f7;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  animation: selectSlideIn 0.2s ease;
+}
+
+.select-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  color: #0a2342;
+}
+
+.select-item:hover {
+  background: #e8f7f7;
+}
+
+@keyframes selectSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

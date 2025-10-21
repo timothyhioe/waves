@@ -1,0 +1,104 @@
+.topbar {
+  background: white;
+  border-bottom: 1px solid #e8f7f7;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  z-index: 50;
+  position: sticky;
+  top: 0;
+}
+
+.topbar-search-container {
+  flex: 1;
+  max-width: 600px;
+}
+
+.topbar-search {
+  position: relative;
+}
+
+.topbar-search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  pointer-events: none;
+}
+
+.topbar-search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  background: #f9fafb;
+  border: 2px solid #e8f7f7;
+  border-radius: 9999px;
+  font-size: 0.95rem;
+  color: #0a2342;
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.topbar-search-input:focus {
+  border-color: #2caaa8;
+  box-shadow: 0 0 0 3px rgba(44, 170, 168, 0.1);
+  background: white;
+}
+
+.topbar-search-input::placeholder {
+  color: #999;
+}
+
+.topbar-user {
+  border: none;
+  margin-left: 1.5rem;
+}
+
+.topbar-user-text {
+  text-align: right;
+  display: none;
+}
+
+
+.topbar-user-name {
+  font-size: 0.875rem;
+  color: #0a2342;
+  font-weight: 600;
+}
+
+
+.topbar-avatar-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topbar-avatar-button:hover {
+  scale: 1.03;
+}
+
+.topbar-avatar-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.topbar-avatar {
+  border: none;
+  background: transparent;
+}
+
+.topbar-avatar-fallback {
+  background: linear-gradient(135deg, #26c6da, #4dd0e1);
+  color: white;
+  font-weight: 600;
+  border-radius: 50%;
+}
+
