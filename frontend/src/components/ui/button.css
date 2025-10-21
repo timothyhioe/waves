@@ -1,0 +1,63 @@
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ui-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Sizes */
+.ui-button-default {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+}
+
+.ui-button-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.ui-button-lg {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+/* Variants */
+.ui-button-default {
+  background: linear-gradient(135deg, #1a5490, #2caaa8);
+  color: white;
+  box-shadow: 0 4px 12px rgba(26, 84, 144, 0.3);
+}
+
+.ui-button-default:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(26, 84, 144, 0.4);
+}
+
+.ui-button-outline {
+  background: transparent;
+  border: 2px solid #e8f7f7;
+  color: #1a5490;
+}
+
+.ui-button-outline:hover:not(:disabled) {
+  background: #e8f7f7;
+}
+
+.ui-button-ghost {
+  background: transparent;
+  color: #1a5490;
+}
+
+.ui-button-ghost:hover:not(:disabled) {
+  background: rgba(26, 84, 144, 0.1);
+}

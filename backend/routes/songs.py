@@ -172,12 +172,23 @@ def stream_song(current_user, song_id):
         if not song:
             return jsonify({'error': 'Song not found'}), 404
 
-        # Build the full file path
+        # Build the full file path - ensure it's always absolute
         if os.path.isabs(song.file_path):
+            # Already absolute path
             file_path = song.file_path
+        elif song.file_path.startswith('uploads/'):
+            # Path already includes 'uploads/', remove it since we'll add UPLOAD_FOLDER
+            filename = song.file_path.replace('uploads/', '')
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
         else:
+            # Just filename
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], song.file_path)
         
+        # Make sure the path is absolute
+        if not os.path.isabs(file_path):
+            file_path = os.path.abspath(file_path)
+        
+        print(f"Song file_path from DB: {song.file_path}")  # Debug
         print(f"Full file path: {file_path}")  # Debug
         print(f"File exists: {os.path.exists(file_path)}")  # Debug
 
