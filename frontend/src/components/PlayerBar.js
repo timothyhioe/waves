@@ -213,7 +213,14 @@ export function PlayerBar({
         src={audioUrl || ''}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={() => {
+          setIsPlaying(false);
+          //auto-play next song from the list
+          if (songs && songs.length > 0 && currentIndex < songs.length - 1) {
+            setCurrentSong(songs[currentIndex + 1]);
+            setIsPlaying(true);
+          }
+        }}
         onError={(e) => {
           console.error("Audio error:", e);
           console.error("Audio error code:", e.target.error?.code);
