@@ -13,7 +13,6 @@ const AuthForm = () => {
         email: "",
         password: "",
         confirmPassword: "",
-        terms: false,
     });
     const [loginErrors, setLoginErrors] = useState({});
     const [registerErrors, setRegisterErrors] = useState({});
@@ -130,10 +129,6 @@ const AuthForm = () => {
         errors.confirmPassword = "Passwords do not match";
         }
 
-        if (!registerData.terms) {
-        errors.terms = "You must accept the terms and conditions";
-        }
-
         setRegisterErrors(errors);
 
         if (Object.keys(errors).length === 0) {
@@ -243,12 +238,6 @@ const AuthForm = () => {
                 <label htmlFor="remember" className="checkbox-label">
                 Remember me
                 </label>
-            </div>
-
-            <div className="forgot-password">
-                <a href="#forgot" className="link">
-                Forgot password?
-                </a>
             </div>
 
             {loginMessage.text && (
@@ -372,24 +361,6 @@ const AuthForm = () => {
                 </span>
                 )}
             </div>
-
-            <div className="checkbox-group">
-                <input
-                type="checkbox"
-                id="terms"
-                className="checkbox-input"
-                checked={registerData.terms}
-                onChange={(e) =>
-                    setRegisterData({ ...registerData, terms: e.target.checked })
-                }
-                />
-                <label htmlFor="terms" className="checkbox-label">
-                I agree to the Terms and Conditions
-                </label>
-            </div>
-            {registerErrors.terms && (
-                <span className="error-text">{registerErrors.terms}</span>
-            )}
 
             <button type="submit" className="submit-button">
                 Create Account

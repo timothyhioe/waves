@@ -12,17 +12,13 @@ const LoginPage = () => {
       <div className="login-content">
         <div className="login-header">
           <WaveLogo />
-          <h1 className="app-title">Waves</h1>
-          <p className="app-subtitle">Your music, your way</p>
         </div>
 
         <AuthForm />
 
         <footer className="login-footer">
           <div className="footer-links">
-            <a href="#privacy">Privacy Policy</a>
-            <span className="separator">•</span>
-            <a href="#terms">Terms of Service</a>
+            <a href="#warning">Not for commercial use</a>
           </div>
         </footer>
       </div>
