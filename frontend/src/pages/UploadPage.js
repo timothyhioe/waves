@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from '../components/ui/sonner';
 import './UploadPage.css';
+import { apiEndpoint } from '../config';
 
 export function UploadPage({ onUpload }) {
   const [dragActive, setDragActive] = useState(false);
@@ -66,7 +67,7 @@ export function UploadPage({ onUpload }) {
 
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:5000/api/songs", {
+        const response = await fetch(apiEndpoint("/api/songs"), {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
