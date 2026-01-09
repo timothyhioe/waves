@@ -3,6 +3,7 @@ import { Search, Download as DownloadIcon, Youtube, Play } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { toast } from '../components/ui/sonner';
 import './DownloadPage.css';
+import { apiEndpoint } from '../config';
 
 export function DownloadPage({ onDownload }) {
   const [query, setQuery] = useState('');
@@ -26,7 +27,7 @@ export function DownloadPage({ onDownload }) {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `http://localhost:5000/api/search?q=${encodeURIComponent(query)}`,
+        apiEndpoint(`/api/search?q=${encodeURIComponent(query)}`),
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -68,7 +69,7 @@ export function DownloadPage({ onDownload }) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/download', {
+      const response = await fetch(apiEndpoint('/api/download'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

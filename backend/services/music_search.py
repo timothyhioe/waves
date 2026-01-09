@@ -81,6 +81,23 @@ class MusicSearchService:
                     'preferredcodec': 'mp3',
                     'preferredquality': '192',
                 }],
+                # anti-bot protection
+                'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'extractor_args': {
+                    'youtube': {
+                        'player_client': ['android', 'web'],
+                        'skip': ['hls', 'dash']
+                    }
+                },
+                'retries': 10,
+                'fragment_retries': 10,
+                'quiet': False, 
+                'no_warnings': False,
+                'ignoreerrors': False,
+                # to avoid forbidden 403
+                'nocheckcertificate': True,
+                'prefer_insecure': True,
+                'socket_timeout': 30,
             }
             
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -92,5 +109,5 @@ class MusicSearchService:
                 
         except Exception as e:
             print(f"YouTube download error: {e}")
-            return None    
+            return None
 
