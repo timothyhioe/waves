@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: waves
+data:
+  REACT_APP_API_URL: "http://localhost:5000" # change to  "" for ingress
