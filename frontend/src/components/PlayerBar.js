@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Volume2, VolumeX, Volume1 } from 'lucide-react';
 import './PlayerBar.css';
+import { apiEndpoint } from '../config';
 
 export function PlayerBar({
   currentSong,
@@ -26,7 +27,7 @@ export function PlayerBar({
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:5000/api/songs/${currentSong.id}/stream`,
+          apiEndpoint(`/api/songs/${currentSong.id}/stream`),
           {
             headers: {
               Authorization: `Bearer ${token}`,

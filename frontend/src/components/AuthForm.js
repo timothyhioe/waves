@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./AuthForm.css";
+import { apiEndpoint } from "../config";
 
 const AuthForm = () => {
     const [activeTab, setActiveTab] = useState("login");
@@ -54,7 +55,7 @@ const AuthForm = () => {
 
         if (Object.keys(errors).length === 0) {
         try {
-            const response = await fetch("http://localhost:5000/api/login", {
+            const response = await fetch(apiEndpoint("/api/login"), {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -133,7 +134,7 @@ const AuthForm = () => {
 
         if (Object.keys(errors).length === 0) {
         try {
-            const response = await fetch("http://localhost:5000/api/register", {
+            const response = await fetch(apiEndpoint("/api/register"), {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
