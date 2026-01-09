@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import { apiEndpoint } from "./config";
 
 import LoginPage from "./pages/LoginPage";
 import { Sidebar } from "./components/SideBar";
@@ -47,7 +48,7 @@ function App() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch("http://localhost:5000/api/songs", {
+      const res = await fetch(apiEndpoint("/api/songs"), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -97,7 +98,8 @@ function App() {
   const handlePrevious = () => {
     if (currentSong && songs.length > 0) {
       const currentIndex = songs.findIndex((s) => s.id === currentSong.id);
-      const prevIndex = currentIndex === 0 ? songs.length - 1 : currentIndex - 1;
+      const prevIndex =
+        currentIndex === 0 ? songs.length - 1 : currentIndex - 1;
       handlePlaySong(songs[prevIndex]);
     }
   };
@@ -110,14 +112,17 @@ function App() {
     if (!deleteDialog.song) return;
 
     const token = localStorage.getItem("token");
-    
+
     try {
-      const response = await fetch(`http://localhost:5000/api/songs/${deleteDialog.song.id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        apiEndpoint(`/api/songs/${deleteDialog.song.id}`),
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.ok) {
         setSongs(songs.filter((s) => s.id !== deleteDialog.song.id));
@@ -142,9 +147,9 @@ function App() {
 
   const handleSaveSongEdit = async (songId, updates) => {
     const token = localStorage.getItem("token");
-    
+
     try {
-      const response = await fetch(`http://localhost:5000/api/songs/${songId}`, {
+      const response = await fetch(apiEndpoint(`/api/songs/${songId}`), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -154,7 +159,9 @@ function App() {
       });
 
       if (response.ok) {
-        setSongs(songs.map((s) => (s.id === songId ? { ...s, ...updates } : s)));
+        setSongs(
+          songs.map((s) => (s.id === songId ? { ...s, ...updates } : s))
+        );
         toast.success("Song updated successfully");
       } else {
         toast.error("Failed to update song");
@@ -200,9 +207,9 @@ function App() {
           {/* Top Bar */}
           {currentPage === "songs" && (
             <TopBar
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            onLogout={handleLogout}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onLogout={handleLogout}
             />
           )}
 
@@ -218,7 +225,9 @@ function App() {
               />
             )}
 
-            {currentPage === "download" && <DownloadPage onDownload={handleDownload} />}
+            {currentPage === "download" && (
+              <DownloadPage onDownload={handleDownload} />
+            )}
 
             {currentPage === "upload" && <UploadPage onUpload={handleUpload} />}
 
