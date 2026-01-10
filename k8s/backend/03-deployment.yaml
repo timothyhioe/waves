@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: europe-west3-docker.pkg.dev/waves-music-483916/waves-repo/waves-backend:v1.0.0
+          image: europe-west3-docker.pkg.dev/waves-music-483916/waves-repo/waves-backend:v1.0.1
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
