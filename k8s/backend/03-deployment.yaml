@@ -4,7 +4,7 @@ metadata:
   name: backend
   namespace: waves
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: backend
@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: waves-backend:v1.0.0
-          imagePullPolicy: Never
+          image: europe-west3-docker.pkg.dev/waves-music-483916/waves-repo/waves-backend:v1.0.1
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
               name: http
@@ -62,11 +62,11 @@ spec:
             failureThreshold: 3
           resources:
             requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
               memory: "512Mi"
               cpu: "500m"
-            limits:
-              memory: "1Gi"
-              cpu: "1000m"
       volumes:
         - name: uploads
           persistentVolumeClaim:

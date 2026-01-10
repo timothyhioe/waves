@@ -3,18 +3,11 @@ kind: Ingress
 metadata:
   name: waves-ingress
   namespace: waves
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
-  ingressClassName: nginx
-  tls:
-    - hosts:
-        - waves.local
-      secretName: waves-tls
   rules:
-    - host: waves.local
-      http:
+    - http:
         paths:
+          # Backend API routes
           - path: /api
             pathType: Prefix
             backend:
@@ -22,10 +15,11 @@ spec:
                 name: backend-service
                 port:
                   number: 5000
+          # Frontend routes
           - path: /
             pathType: Prefix
             backend:
               service:
                 name: frontend-service
                 port:
-                  number: 3000
+                  number: 80

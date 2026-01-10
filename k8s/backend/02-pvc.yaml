@@ -5,8 +5,8 @@ metadata:
   namespace: waves
 spec:
   accessModes:
-    - ReadWriteMany  # Multiple backend pods need access
-  storageClassName: standard
+    - ReadWriteOnce # Single node access (GCP standard-rwo requirement)
+  storageClassName: standard-rwo
   resources:
     requests:
       storage: 20Gi
