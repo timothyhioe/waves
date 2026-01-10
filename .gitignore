@@ -128,3 +128,11 @@ instance/
 *.cert
 k8s/ingress/*.crt
 k8s/ingress/*.key
+
+# Kubernetes Secrets (contain sensitive data)
+k8s/**/*secret*.yaml
+k8s/**/*secret*.yml
+k8s/**/01-secret.yaml
+k8s/**/*-secret.yaml
+k8s/backend/01-secret.yaml
+k8s/postgres/01-secret.yaml
