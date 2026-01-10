@@ -16,11 +16,17 @@ app = Flask(__name__)
 
 load_dotenv()
 
-# More explicit CORS configuration
-# Allow all origins for development (restrict in production)
+# CORS configuration for GKE Ingress
+# When using Ingress, frontend and backend are on the same origin
+# Allow specific origins for development and production
 CORS(
     app,
-    origins=["https://waves.local", "http://localhost:3000"],
+    origins=[
+        "https://waves.local",  # Minikube
+        "http://localhost:3000",  # Local dev
+        "http://34.96.102.237",  # GKE Ingress IP
+        "http://34.96.102.237:80",  # Explicit port
+    ],
     allow_headers=["Content-Type", "Authorization"],
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     supports_credentials=True,
@@ -31,8 +37,14 @@ CORS(
 @app.after_request
 def after_request(response):
     origin = request.headers.get("Origin")
+    allowed_origins = [
+        "https://waves.local",
+        "http://localhost:3000",
+        "http://34.96.102.237",
+        "http://34.96.102.237:80",
+    ]
     # Only add CORS headers if origin is in allowed list
-    if origin in ["https://waves.local", "http://localhost:3000"]:
+    if origin in allowed_origins:
         response.headers.add("Access-Control-Allow-Origin", origin)
         response.headers.add(
             "Access-Control-Allow-Headers", "Content-Type,Authorization"
