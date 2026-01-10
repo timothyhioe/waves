@@ -120,3 +120,11 @@ uploads/
 
 # Music instances
 instance/
+
+# SSL Certificates and Keys
+*.crt
+*.key
+*.pem
+*.cert
+k8s/ingress/*.crt
+k8s/ingress/*.key
