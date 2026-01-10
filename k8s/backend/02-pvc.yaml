@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backend-uploads
+  namespace: waves
+spec:
+  accessModes:
+    - ReadWriteMany  # Multiple backend pods need access
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 20Gi
