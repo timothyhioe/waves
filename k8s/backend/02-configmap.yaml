@@ -4,5 +4,5 @@ metadata:
   name: backend-config
   namespace: waves
 data:
-  FLASK_ENV: "development"
+  FLASK_ENV: "production"
   UPLOAD_FOLDER: "/app/uploads"
