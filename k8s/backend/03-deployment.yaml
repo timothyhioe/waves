@@ -41,6 +41,9 @@ spec:
                 configMapKeyRef:
                   name: backend-config
                   key: UPLOAD_FOLDER
+          volumeMounts:
+            - name: uploads
+              mountPath: /app/uploads
           livenessProbe:
             httpGet:
               path: /api/health
@@ -64,3 +67,7 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1000m"
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: backend-uploads
