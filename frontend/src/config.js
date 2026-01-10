@@ -2,7 +2,8 @@
 // For Kubernetes with Ingress: use relative URL (empty string)
 // For local dev: use http://localhost:5000
 // React env vars are embedded at BUILD TIME
-export const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const envUrl = process.env.REACT_APP_API_URL;
+export const API_URL = envUrl !== undefined ? envUrl : "http://localhost:5000";
 
 export const apiEndpoint = (path) => {
   const cleanPath = path.startsWith("/") ? path : `/${path}`;

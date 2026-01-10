@@ -20,7 +20,7 @@ load_dotenv()
 # Allow all origins for development (restrict in production)
 CORS(
     app,
-    origins=["*"],  # Allow all origins for now (for Kubernetes port-forward/Ingress)
+    origins=["https://waves.local", "http://localhost:3000"],
     allow_headers=["Content-Type", "Authorization"],
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     supports_credentials=True,
@@ -30,12 +30,17 @@ CORS(
 # Add CORS headers manually to all responses
 @app.after_request
 def after_request(response):
-    # Get origin from request, fallback to localhost:3000
-    origin = request.headers.get("Origin", "http://localhost:3000")
-    response.headers.add("Access-Control-Allow-Origin", origin)
-    response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
-    response.headers.add("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
-    response.headers.add("Access-Control-Allow-Credentials", "true")
+    origin = request.headers.get("Origin")
+    # Only add CORS headers if origin is in allowed list
+    if origin in ["https://waves.local", "http://localhost:3000"]:
+        response.headers.add("Access-Control-Allow-Origin", origin)
+        response.headers.add(
+            "Access-Control-Allow-Headers", "Content-Type,Authorization"
+        )
+        response.headers.add(
+            "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
+        )
+        response.headers.add("Access-Control-Allow-Credentials", "true")
     return response
 
 
