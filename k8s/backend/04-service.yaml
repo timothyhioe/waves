@@ -3,6 +3,9 @@ kind: Service
 metadata:
   name: backend-service
   namespace: waves
+  annotations:
+    cloud.google.com/backend-config: '{"default": "backend-config"}'
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
   type: ClusterIP
   ports:
