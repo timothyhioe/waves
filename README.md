@@ -4,7 +4,7 @@ A modern, full-stack music streaming application with cloud deployment on Google
 
 ## Live Demo
 
-**Deployed Application**: [http://34.96.102.237](http://34.96.102.237)
+**Deployed Application**: contact timothy.hioe@gmail.com
 
 Create your own account to explore all features.
 

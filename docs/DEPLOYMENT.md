@@ -623,19 +623,6 @@ kubectl rollout status deployment/backend -n waves --watch
 
 ## Cost Management
 
-### Current Monthly Costs (Approximate)
-
-**GKE cluster running 24/7:**
-
-- Control plane: Free (one zonal cluster per billing account)
-- Compute Engine nodes: ~$25/month (1x e2-medium)
-- Persistent disks: ~$2/month (30GB total)
-- LoadBalancer (Ingress): ~$18/month
-- Network egress: ~$5-10/month (depends on usage)
-- **Total: ~$50-55/month**
-
-### Cost Optimization Tips
-
 1. **Delete cluster when not in use:**
 
 ```bash
