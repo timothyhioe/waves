@@ -155,7 +155,14 @@ docker build -f Dockerfile.prod --build-arg REACT_APP_API_URL="" -t waves-fronte
 
 ### Deploy to Minikube
 
-**Apply all Kubernetes configs:**
+**Option 1: Use the automated script (recommended):**
+
+```bash
+cd /home/tim/coding/Music_Player
+./k8s/apply-minikube.sh
+```
+
+**Option 2: Manual deployment:**
 
 ```bash
 cd /home/tim/coding/Music_Player
@@ -164,17 +171,39 @@ cd /home/tim/coding/Music_Player
 kubectl apply -f k8s/00-namespace.yaml
 
 # Deploy PostgreSQL
-kubectl apply -f k8s/postgres/
+kubectl apply -f k8s/postgres/01-secret.yaml
+kubectl apply -f k8s/postgres/03-service.yaml
+# Note: StatefulSet might show errors if immutable fields changed - that's OK
 
-# Deploy backend
-kubectl apply -f k8s/backend/
+# Deploy backend (skip GKE-specific resources)
+kubectl apply -f k8s/backend/01-secret.yaml
+kubectl apply -f k8s/backend/02-configmap.yaml
+# Use Minikube-compatible PVC
+kubectl apply -f k8s/backend/02-pvc-minikube.yaml || kubectl apply -f k8s/backend/02-pvc.yaml
+kubectl apply -f k8s/backend/03-deployment.yaml
+kubectl apply -f k8s/backend/04-service.yaml
+# Skip BackendConfig (GKE-only): k8s/backend/05-backendconfig.yaml
+kubectl apply -f k8s/backend/06-hpa.yaml
 
 # Deploy frontend
-kubectl apply -f k8s/frontend/
+kubectl apply -f k8s/frontend/01-configmap.yaml
+kubectl apply -f k8s/frontend/02-deployment.yaml
+kubectl apply -f k8s/frontend/03-service.yaml
+kubectl apply -f k8s/frontend/04-hpa.yaml
 
 # Deploy Ingress
-kubectl apply -f k8s/ingress/
+kubectl apply -f k8s/ingress/00-default-backend.yaml
+kubectl apply -f k8s/ingress/02-ingress.yaml
+
+# Enable metrics-server for HPA (required)
+minikube addons enable metrics-server
 ```
+
+**Note:** If you see errors about:
+
+- **BackendConfig**: This is GKE-only, skip it on Minikube
+- **PVC immutable fields**: The PVC already exists with different settings. Either delete it first (`kubectl delete pvc backend-uploads -n waves`) or use the existing one
+- **StatefulSet immutable fields**: Some StatefulSet fields can't be changed. Delete and recreate if needed: `kubectl delete statefulset postgres -n waves` then reapply
 
 **Update deployments to use local images:**
 
@@ -353,6 +382,10 @@ kubectl apply -f k8s/ingress/00-default-backend.yaml
 
 # Deploy Ingress
 kubectl apply -f k8s/ingress/02-ingress.yaml
+
+# Deploy HPA (Horizontal Pod Autoscaler)
+kubectl apply -f k8s/backend/06-hpa.yaml
+kubectl apply -f k8s/frontend/04-hpa.yaml
 ```
 
 ### Step 5: Wait for Ingress IP
@@ -409,6 +442,69 @@ curl http://$INGRESS_IP/api/health
 
 **Access application:**
 Open browser to: http://34.96.102.237
+
+### Step 7: Configure Horizontal Pod Autoscaler (HPA)
+
+HPA automatically scales pods based on CPU and memory usage. This is already configured in the deployment.
+
+**Check HPA status:**
+
+```bash
+kubectl get hpa -n waves
+```
+
+Expected output:
+
+```
+NAME           REFERENCE             TARGETS                        MINPODS   MAXPODS   REPLICAS   AGE
+backend-hpa    Deployment/backend    cpu: 15%/70%, memory: 20%/80%  1         5         1          5m
+frontend-hpa   Deployment/frontend   cpu: 5%/70%, memory: 10%/80%    1         3         1          5m
+```
+
+**HPA Configuration:**
+
+- **Backend HPA:**
+  - Min replicas: 1
+  - Max replicas: 5
+  - CPU target: 70% utilization
+  - Memory target: 80% utilization
+  - Scale up: Aggressive (100% increase or +2 pods per 30s)
+  - Scale down: Conservative (50% decrease per 60s, 5min stabilization)
+
+- **Frontend HPA:**
+  - Min replicas: 1
+  - Max replicas: 3
+  - CPU target: 70% utilization
+  - Memory target: 80% utilization
+  - Scale up: Aggressive (100% increase or +1 pod per 30s)
+  - Scale down: Conservative (50% decrease per 60s, 5min stabilization)
+
+**View HPA details:**
+
+```bash
+kubectl describe hpa backend-hpa -n waves
+kubectl describe hpa frontend-hpa -n waves
+```
+
+**Monitor HPA events:**
+
+```bash
+kubectl get events -n waves --sort-by='.lastTimestamp' | grep hpa
+```
+
+**Note:** HPA requires metrics-server to be running. On GKE, metrics-server is enabled by default. On Minikube, enable it with:
+
+```bash
+minikube addons enable metrics-server
+```
+
+**How HPA works:**
+
+- HPA monitors CPU and memory usage of pods
+- When average utilization exceeds targets, it scales up
+- When utilization drops below targets, it scales down (after stabilization period)
+- The number of replicas is automatically adjusted between min and max values
+- You should NOT manually set `replicas` in deployments when using HPA (keep it at 1)
 
 ---
 
@@ -828,11 +924,24 @@ resources:
     cpu: "1000m"
 ```
 
-**Scale deployment:**
+**Scale deployment manually (not recommended with HPA):**
 
 ```bash
-# Increase replicas
+# Increase replicas (HPA will override this)
 kubectl scale deployment backend --replicas=2 -n waves
+
+# Note: If HPA is enabled, it will automatically adjust replicas based on metrics.
+# Manual scaling is temporary and will be overridden by HPA.
+```
+
+**Adjust HPA settings:**
+
+```bash
+# Edit HPA directly
+kubectl edit hpa backend-hpa -n waves
+
+# Or update the YAML file and reapply
+kubectl apply -f k8s/backend/06-hpa.yaml
 ```
 
 ### View All Resources
